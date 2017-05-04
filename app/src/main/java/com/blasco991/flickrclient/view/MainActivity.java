@@ -12,15 +12,15 @@ import com.blasco991.flickrclient.MVC;
 import com.blasco991.flickrclient.R;
 
 
-public abstract class MainActivity extends AppCompatActivity implements com.blasco991.flickrclient.view.View {
+public class MainActivity extends AppCompatActivity implements com.blasco991.flickrclient.view.View {
     private MVC mvc;
     private ProgressBar progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mvc = ((FlickerApp) getApplication()).getMVC();
         setContentView(R.layout.activity_main);
+        mvc = ((FlickerApp) getApplication()).getMVC();
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
     }
 
@@ -53,5 +53,6 @@ public abstract class MainActivity extends AppCompatActivity implements com.blas
     }
 
     @Override
-    public abstract void onModelChanged();
+    public void onModelChanged() {
+    }
 }

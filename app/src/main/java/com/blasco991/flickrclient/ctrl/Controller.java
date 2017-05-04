@@ -5,6 +5,7 @@ import android.support.annotation.UiThread;
 import android.support.annotation.WorkerThread;
 
 import com.blasco991.flickrclient.MVC;
+import com.blasco991.flickrclient.model.Entry;
 import com.blasco991.flickrclient.model.Model;
 
 import org.w3c.dom.Document;
@@ -38,17 +39,17 @@ public class Controller {
         new PicturesInfoFetcher().execute(searchString);
     }
 
-    private class PicturesInfoFetcher extends AsyncTask<String, Void, Iterable<Model.PictureInfo>> {
+    private class PicturesInfoFetcher extends AsyncTask<String, Void, Iterable<Entry>> {
 
         @Override
         @WorkerThread
-        protected Iterable<Model.PictureInfo> doInBackground(String... args) {
+        protected Iterable<Entry> doInBackground(String... args) {
             return fetchPictureInfos(args[0]);
         }
 
         @Override
         @UiThread
-        protected void onPostExecute(Iterable<Model.PictureInfo> pictureInfos) {
+        protected void onPostExecute(Iterable<Entry> pictureInfos) {
             mvc.model.storePictureInfos(pictureInfos);
         }
 
@@ -56,9 +57,9 @@ public class Controller {
         private final static String API_KEY = "fdce896d8a8474e8a55a3eb6fa92192e";
 
         @WorkerThread
-        private Iterable<Model.PictureInfo> fetchPictureInfos(String searchString) {
+        private Iterable<Entry> fetchPictureInfos(String searchString) {
             String queryUrl = String.format("%s&api_key=%s&text=%s", API_URL, API_KEY, searchString);
-            List<Model.PictureInfo> infos = new LinkedList<>();
+            List<Entry> infos = new LinkedList<>();
 
             try {
                 URL url = new URL(queryUrl);
@@ -78,7 +79,7 @@ public class Controller {
                             String photo_id = node.getAttributes().getNamedItem("id").getNodeValue();
                             String secret = node.getAttributes().getNamedItem("secret").getNodeValue();
                             String urlPhotos = "https://farm" + farm_id + ".staticflickr.com/" + server_id + "/" + photo_id + "_" + secret + "_m.jpg";
-                            infos.add(new Model.PictureInfo(node.getAttributes().getNamedItem("title").getNodeValue(), urlPhotos));
+                            infos.add(new Entry(node.getAttributes().getNamedItem("title").getNodeValue(), urlPhotos));
                         }
 
                     } catch (ParserConfigurationException | SAXException e) {

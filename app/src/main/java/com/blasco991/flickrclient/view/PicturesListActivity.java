@@ -1,7 +1,6 @@
 package com.blasco991.flickrclient.view;
 
 import android.app.Activity;
-import android.app.ListActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -9,26 +8,24 @@ import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.UiThread;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.blasco991.flickrclient.FlickerApp;
 import com.blasco991.flickrclient.MVC;
 import com.blasco991.flickrclient.R;
-import com.blasco991.flickrclient.model.Model;
 
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-public class PicturesListActivity extends ListActivity implements com.blasco991.flickrclient.view.View {
-    private MVC mvc;
+public class PicturesListActivity extends Activity implements com.blasco991.flickrclient.view.View {
     private final static String TAG = PicturesListActivity.class.getName();
     private final static String PARAM_SEARCH_STRING = TAG + ".search_string";
+
+    private MVC mvc;
+    private RecyclerView.Adapter mAdapter;
 
     public static void start(Context parent, String search) {
         Intent intent = new Intent(parent, PicturesListActivity.class);
@@ -40,8 +37,15 @@ public class PicturesListActivity extends ListActivity implements com.blasco991.
     @UiThread
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_results);
+        setContentView(R.layout.activity_pictures_list);
         mvc = ((FlickerApp) getApplication()).getMVC();
+
+        mAdapter = new PictureInfoAdapter(mvc.model.getPictureInfos());
+        RecyclerView mRecyclerView = (RecyclerView) findViewById(R.id.recyclerList);
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this);
+        mRecyclerView.setLayoutManager(mLayoutManager);
+        mRecyclerView.setAdapter(mAdapter);
+
         mvc.controller.fetchPictureInfos(getIntent().getStringExtra(PARAM_SEARCH_STRING));
     }
 
@@ -56,74 +60,17 @@ public class PicturesListActivity extends ListActivity implements com.blasco991.
     @Override
     @UiThread
     protected void onStop() {
-        mvc.unregister(this);
         super.onStop();
+        mvc.unregister(this);
     }
 
     @Override
     @UiThread
     public void onModelChanged() {
-        ArrayAdapter<Model.PictureInfo> adapter = new PictureInfoAdapter
-                (this, R.layout.row, mvc.model.getPictureInfos());
-        setListAdapter(adapter);
+        mAdapter.notifyDataSetChanged();
     }
 
-    @Override
-    public void makeToast(String text) {
-
-    }
-
-    @Override
-    public void makeToast(String text, int length) {
-
-    }
-
-    private class PictureInfoAdapter extends ArrayAdapter<Model.PictureInfo> {
-
-        Context context;
-        int layoutResourceId;
-        Model.PictureInfo pictureInfos[] = null;
-
-        PictureInfoAdapter(Context context, int layoutResourceId, Model.PictureInfo[] data) {
-            super(context, layoutResourceId, data);
-            this.layoutResourceId = layoutResourceId;
-            this.context = context;
-            this.pictureInfos = data;
-        }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            View row = convertView;
-            EntryHolder holder = null;
-
-            if (row == null) {
-                LayoutInflater inflater = ((Activity) context).getLayoutInflater();
-                row = inflater.inflate(layoutResourceId, parent, false);
-
-                holder = new EntryHolder();
-                holder.imgIcon = (ImageView) row.findViewById(R.id.imgIcon);
-                holder.txtTitle = (TextView) row.findViewById(R.id.txtTitle);
-
-                row.setTag(holder);
-            } else {
-                holder = (EntryHolder) row.getTag();
-            }
-
-            Model.PictureInfo pictureInfo = pictureInfos[position];
-            holder.txtTitle.setText(pictureInfo.getTitle());
-            new ImageLoadTask(holder.imgIcon).execute(pictureInfo.getUrl());
-
-            return row;
-        }
-
-    }
-
-    private static class EntryHolder {
-        ImageView imgIcon;
-        TextView txtTitle;
-    }
-
-    private class ImageLoadTask extends AsyncTask<String, Void, Bitmap> {
+    private static class ImageLoadTask extends AsyncTask<String, Void, Bitmap> {
 
         private ImageView imageView;
 
@@ -148,6 +95,7 @@ public class PicturesListActivity extends ListActivity implements com.blasco991.
         }
 
         @Override
+        @UiThread
         protected void onPostExecute(Bitmap result) {
             super.onPostExecute(result);
             imageView.setImageBitmap(result);

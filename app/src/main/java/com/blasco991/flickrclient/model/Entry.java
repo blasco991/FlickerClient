@@ -1,27 +1,30 @@
 package com.blasco991.flickrclient.model;
 
+import net.jcip.annotations.Immutable;
+
 import java.io.Serializable;
 
 /**
  * Created by blasco991 on 02/05/17.
  */
 
-public class Entry implements Serializable {
+@Immutable
+public class Entry {
+    final String title;
+    final String url;
 
-    private final String name;
-    private final String url;
-
-    public Entry(String name, String url) {
-        this.name = name;
+    public Entry(String title, String url) {
+        this.title = title;
         this.url = url;
     }
 
+    @Override
     public String toString() {
-        return "Title:\t" + this.name + "\nURL:\t" + this.url;
+        return title + "\n" + url;
     }
 
-    public String getName() {
-        return name;
+    public String getTitle() {
+        return title;
     }
 
     public String getUrl() {
