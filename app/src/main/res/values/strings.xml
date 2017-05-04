@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">FlickerClient</string>
+    <string name="hint_search_term">Search terms</string>
+    <string name="search_btn">Search</string>
+</resources>
