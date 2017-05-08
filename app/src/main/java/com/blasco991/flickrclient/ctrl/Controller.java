@@ -6,7 +6,6 @@ import android.support.annotation.WorkerThread;
 
 import com.blasco991.flickrclient.MVC;
 import com.blasco991.flickrclient.model.Entry;
-import com.blasco991.flickrclient.model.Model;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -53,7 +52,7 @@ public class Controller {
             mvc.model.storePictureInfos(pictureInfos);
         }
 
-        private static final String API_URL = "https://api.flickr.com/services/rest?method=flickr.photos.search&per_page=10";
+        private static final String API_URL = "https://api.flickr.com/services/rest?method=flickr.photos.search";
         private final static String API_KEY = "fdce896d8a8474e8a55a3eb6fa92192e";
 
         @WorkerThread
@@ -78,7 +77,7 @@ public class Controller {
                             String server_id = node.getAttributes().getNamedItem("server").getNodeValue();
                             String photo_id = node.getAttributes().getNamedItem("id").getNodeValue();
                             String secret = node.getAttributes().getNamedItem("secret").getNodeValue();
-                            String urlPhotos = "https://farm" + farm_id + ".staticflickr.com/" + server_id + "/" + photo_id + "_" + secret + "_m.jpg";
+                            String urlPhotos = "https://farm" + farm_id + ".staticflickr.com/" + server_id + "/" + photo_id + "_" + secret + "_n.jpg";
                             infos.add(new Entry(node.getAttributes().getNamedItem("title").getNodeValue(), urlPhotos));
                         }
 

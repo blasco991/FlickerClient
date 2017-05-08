@@ -3,22 +3,16 @@ package com.blasco991.flickrclient.view;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.UiThread;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.widget.ImageView;
+import android.util.Log;
 
 import com.blasco991.flickrclient.FlickerApp;
 import com.blasco991.flickrclient.MVC;
 import com.blasco991.flickrclient.R;
-
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
 
 public class PicturesListActivity extends Activity implements com.blasco991.flickrclient.view.View {
     private final static String TAG = PicturesListActivity.class.getName();
@@ -39,12 +33,17 @@ public class PicturesListActivity extends Activity implements com.blasco991.flic
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pictures_list);
         mvc = ((FlickerApp) getApplication()).getMVC();
+        Log.d(TAG, "onCreate");
 
-        mAdapter = new PictureInfoAdapter(mvc.model.getPictureInfos());
-        RecyclerView mRecyclerView = (RecyclerView) findViewById(R.id.recyclerList);
+        RecyclerView mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(mLayoutManager);
+        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
+
+        mAdapter = new PictureInfoAdapter(mvc.model.getPictureInfos());
         mRecyclerView.setAdapter(mAdapter);
+        //mRecyclerView.hasFixedSize();
+        Log.d(TAG, "onCreate setAdapter");
 
         mvc.controller.fetchPictureInfos(getIntent().getStringExtra(PARAM_SEARCH_STRING));
     }
@@ -70,37 +69,5 @@ public class PicturesListActivity extends Activity implements com.blasco991.flic
         mAdapter.notifyDataSetChanged();
     }
 
-    private static class ImageLoadTask extends AsyncTask<String, Void, Bitmap> {
-
-        private ImageView imageView;
-
-        ImageLoadTask(ImageView imageView) {
-            this.imageView = imageView;
-        }
-
-        @Override
-        protected Bitmap doInBackground(String... params) {
-            try {
-                URL urlConnection = new URL(params[0]);
-                HttpURLConnection connection = (HttpURLConnection) urlConnection
-                        .openConnection();
-                connection.setDoInput(true);
-                connection.connect();
-                InputStream input = connection.getInputStream();
-                return BitmapFactory.decodeStream(input);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            return null;
-        }
-
-        @Override
-        @UiThread
-        protected void onPostExecute(Bitmap result) {
-            super.onPostExecute(result);
-            imageView.setImageBitmap(result);
-        }
-
-    }
 
 }
