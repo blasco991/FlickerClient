@@ -2,10 +2,10 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/FlickerClient.iml" filepath="$PROJECT_DIR$/FlickerClient.iml" />
       <module fileurl="file://C:\Users\marian\AndroidStudioProjects\FlickerClient\FlickerClient.iml" filepath="C:\Users\marian\AndroidStudioProjects\FlickerClient\FlickerClient.iml" />
-      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://C:\Users\marian\AndroidStudioProjects\FlickerClient\app\app.iml" filepath="C:\Users\marian\AndroidStudioProjects\FlickerClient\app\app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/FlickerClient.iml" filepath="$PROJECT_DIR$/FlickerClient.iml" />
+      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
   </component>
 </project>

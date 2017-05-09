@@ -42,8 +42,20 @@ public class PicturesListActivity extends Activity implements com.blasco991.flic
 
         mAdapter = new PictureInfoAdapter(mvc.model.getPictureInfos());
         mRecyclerView.setAdapter(mAdapter);
-        //mRecyclerView.hasFixedSize();
-        Log.d(TAG, "onCreate setAdapter");
+        mRecyclerView.addOnItemTouchListener(new PictureInfoAdapter.RecyclerItemClickListener(this, mRecyclerView, new PictureInfoAdapter.RecyclerItemClickListener.OnItemClickListener() {
+            @Override
+            public void onItemClick(android.view.View view, int position) {
+                Log.d(TAG, String.valueOf(view));
+                Intent intent = new Intent(PicturesListActivity.this, ViewImageActivity.class);
+                intent.putExtra("imageURL", ((String)view.getTag()));
+                startActivity(intent);
+            }
+
+            @Override
+            public void onLongItemClick(android.view.View view, int position) {
+                Log.d(TAG, String.valueOf(view));
+            }
+        }));
 
         mvc.controller.fetchPictureInfos(getIntent().getStringExtra(PARAM_SEARCH_STRING));
     }

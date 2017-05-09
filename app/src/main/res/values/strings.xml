@@ -2,4 +2,8 @@
     <string name="app_name">FlickrClient</string>
     <string name="hint_search_term">Search terms</string>
     <string name="search_btn">Search</string>
+
+    <string name="title_activity_view_image">ViewImage</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
 </resources>
