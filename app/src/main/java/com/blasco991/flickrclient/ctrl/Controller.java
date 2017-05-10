@@ -1,18 +1,23 @@
 package com.blasco991.flickrclient.ctrl;
 
+import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.support.annotation.UiThread;
 import android.support.annotation.WorkerThread;
+import android.util.Log;
 
 import com.blasco991.flickrclient.MVC;
 import com.blasco991.flickrclient.model.Entry;
+import com.blasco991.flickrclient.view.View;
 
 import org.w3c.dom.Document;
+import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.LinkedList;
@@ -52,7 +57,7 @@ public class Controller {
             mvc.model.storePictureInfos(pictureInfos);
         }
 
-        private static final String API_URL = "https://api.flickr.com/services/rest?method=flickr.photos.search";
+        private static final String API_URL = "https://api.flickr.com/services/rest?method=flickr.photos.search&extras=url_z,url_c,url_s,tags";
         private final static String API_KEY = "fdce896d8a8474e8a55a3eb6fa92192e";
 
         @WorkerThread
@@ -73,12 +78,46 @@ public class Controller {
                         NodeList photosXML = doc.getElementsByTagName("photo");
                         for (int i = 0; i < photosXML.getLength(); i++) {
                             Node node = photosXML.item(i);
-                            String farm_id = node.getAttributes().getNamedItem("farm").getNodeValue();
-                            String server_id = node.getAttributes().getNamedItem("server").getNodeValue();
-                            String photo_id = node.getAttributes().getNamedItem("id").getNodeValue();
-                            String secret = node.getAttributes().getNamedItem("secret").getNodeValue();
-                            String urlPhotos = "https://farm" + farm_id + ".staticflickr.com/" + server_id + "/" + photo_id + "_" + secret + "_n.jpg";
-                            infos.add(new Entry(node.getAttributes().getNamedItem("title").getNodeValue(), urlPhotos));
+                            NamedNodeMap attributes = node.getAttributes();
+
+                            String title = attributes.getNamedItem("title").getNodeValue();
+                            String tags = attributes.getNamedItem("tags").getNodeValue();
+                            String urlPhotoPreview;
+                            if (attributes.getNamedItem("url_z") != null)
+                                urlPhotoPreview = attributes.getNamedItem("url_z").getNodeValue();
+                            else
+                                urlPhotoPreview = attributes.getNamedItem("url_s").getNodeValue();
+                            String urlPhoto;
+                            if (attributes.getNamedItem("url_c") != null)
+                                urlPhoto = attributes.getNamedItem("url_c").getNodeValue();
+                            else
+                                urlPhoto = attributes.getNamedItem("url_s").getNodeValue();
+                            Entry entry = new Entry(title, urlPhoto, i, tags);
+
+                            //image LOAD
+                            int j = i;
+                            new Thread(() -> {
+                                URL urlImageConnection;
+                                try {
+                                    urlImageConnection = new URL(urlPhotoPreview);
+                                    HttpURLConnection connection = (HttpURLConnection) urlImageConnection.openConnection();
+                                    connection.setDoInput(true);
+                                    connection.connect();
+                                    try (InputStream input = connection.getInputStream()) {
+                                        entry.setPreview(BitmapFactory.decodeStream(input));
+                                        Log.d("Thread:\t" + Thread.currentThread().getId(), "Bytes loaded:\t" + entry.getPreview().getRowBytes());
+                                        mvc.forEachView(new MVC.ViewTask() {
+                                            @Override
+                                            public void process(View view) {
+                                                view.onModelChanged(j);
+                                            }
+                                        });
+                                    }
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                            }).start();
+                            infos.add(entry);
                         }
 
                     } catch (ParserConfigurationException | SAXException e) {
@@ -90,4 +129,6 @@ public class Controller {
             return infos;
         }
     }
+
+
 }

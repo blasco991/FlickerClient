@@ -3,6 +3,7 @@
     package="com.blasco991.flickrclient">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
         android:name=".FlickerApp"
@@ -20,7 +21,13 @@
             </intent-filter>
         </activity>
         <activity android:name=".view.PicturesListActivity" />
-        <activity android:name=".view.ViewImageActivity" />
+        <activity
+            android:name=".view.ViewImageActivity"
+            android:theme="@style/Theme.AppCompat">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.blasco991.flickrclient.view.PicturesListActivity" />
+        </activity>
     </application>
 
 </manifest>

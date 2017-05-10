@@ -1,5 +1,7 @@
 package com.blasco991.flickrclient.model;
 
+import android.graphics.Bitmap;
+
 import net.jcip.annotations.Immutable;
 
 import java.io.Serializable;
@@ -9,14 +11,22 @@ import java.io.Serializable;
  */
 
 @Immutable
-public class Entry {
-    final String title;
-    final String url;
+public class Entry implements Serializable {
 
-    public Entry(String title, String url) {
+    private int ID;
+    private Bitmap preview;
+    private final String title;
+    private final String url;
+    private final String tags;
+
+    public Entry(String title, String url, int id, String tags) {
+        this.ID = id;
+        this.tags = tags;
+        this.preview = null;
         this.title = title;
         this.url = url;
     }
+
 
     @Override
     public String toString() {
@@ -30,4 +40,17 @@ public class Entry {
     public String getUrl() {
         return url;
     }
+
+    public Bitmap getPreview() {
+        return preview;
+    }
+
+    public void setPreview(Bitmap bitmap) {
+        this.preview = bitmap;
+    }
+
+    public String getTags() {
+        return tags;
+    }
+
 }

@@ -13,6 +13,7 @@ import android.util.Log;
 import com.blasco991.flickrclient.FlickerApp;
 import com.blasco991.flickrclient.MVC;
 import com.blasco991.flickrclient.R;
+import com.blasco991.flickrclient.model.Entry;
 
 public class PicturesListActivity extends Activity implements com.blasco991.flickrclient.view.View {
     private final static String TAG = PicturesListActivity.class.getName();
@@ -20,6 +21,9 @@ public class PicturesListActivity extends Activity implements com.blasco991.flic
 
     private MVC mvc;
     private RecyclerView.Adapter mAdapter;
+    private long mLastClickTime = System.currentTimeMillis();
+    private static final long CLICK_TIME_INTERVAL = 1500;
+
 
     public static void start(Context parent, String search) {
         Intent intent = new Intent(parent, PicturesListActivity.class);
@@ -45,15 +49,22 @@ public class PicturesListActivity extends Activity implements com.blasco991.flic
         mRecyclerView.addOnItemTouchListener(new PictureInfoAdapter.RecyclerItemClickListener(this, mRecyclerView, new PictureInfoAdapter.RecyclerItemClickListener.OnItemClickListener() {
             @Override
             public void onItemClick(android.view.View view, int position) {
-                Log.d(TAG, String.valueOf(view));
-                Intent intent = new Intent(PicturesListActivity.this, ViewImageActivity.class);
-                intent.putExtra("imageURL", ((String)view.getTag()));
-                startActivity(intent);
+                long now = System.currentTimeMillis(); //onDblClick
+                if (now - mLastClickTime < CLICK_TIME_INTERVAL) {
+                    Intent intent = new Intent(PicturesListActivity.this, ViewImageActivity.class);
+                    Entry entry = ((Entry) view.findViewById(R.id.imageView).getTag());
+                    Bundle bundle = new Bundle();
+                    bundle.putSerializable("entry", entry);
+                    intent.putExtra("bundle", bundle);
+                    startActivity(intent);
+                }
+                Log.d(TAG, now - mLastClickTime + "");
+                mLastClickTime = now;
+
             }
 
             @Override
             public void onLongItemClick(android.view.View view, int position) {
-                Log.d(TAG, String.valueOf(view));
             }
         }));
 
@@ -65,7 +76,6 @@ public class PicturesListActivity extends Activity implements com.blasco991.flic
     protected void onStart() {
         super.onStart();
         mvc.register(this);
-        onModelChanged();
     }
 
     @Override
@@ -79,6 +89,11 @@ public class PicturesListActivity extends Activity implements com.blasco991.flic
     @UiThread
     public void onModelChanged() {
         mAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void onModelChanged(int entryID) {
+        mAdapter.notifyItemChanged(entryID);
     }
 
 

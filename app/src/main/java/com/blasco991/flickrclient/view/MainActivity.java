@@ -35,7 +35,6 @@ public class MainActivity extends AppCompatActivity implements com.blasco991.fli
     protected void onStart() {
         super.onStart();
         mvc.register(this);
-        onModelChanged();
     }
 
     @Override
@@ -54,5 +53,10 @@ public class MainActivity extends AppCompatActivity implements com.blasco991.fli
 
     @Override
     public void onModelChanged() {
+    }
+
+    @Override
+    public void onModelChanged(int entryID) {
+
     }
 }

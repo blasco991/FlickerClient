@@ -1,6 +1,7 @@
 package com.blasco991.flickrclient;
 
 
+import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
 
@@ -20,10 +21,12 @@ import java.util.concurrent.CopyOnWriteArrayList;
 public class MVC {
     public final Model model;
     public final Controller controller;
+    public final Context context;
     private final List<View> views = new CopyOnWriteArrayList<>();
 
-    public MVC(Model model, Controller controller) {
+    public MVC(Model model, Controller controller, Context context) {
         this.model = model;
+        this.context = context;
         this.controller = controller;
 
         model.setMVC(this);

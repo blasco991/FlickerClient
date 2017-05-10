@@ -16,7 +16,7 @@ public class FlickerApp extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        mvc = new MVC(new Model(), new Controller());
+        mvc = new MVC(new Model(), new Controller(), getApplicationContext());
     }
 
     public MVC getMVC() {

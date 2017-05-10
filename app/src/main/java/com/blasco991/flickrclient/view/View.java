@@ -12,6 +12,9 @@ public interface View {
     void onModelChanged();
 
     @UiThread
+    void onModelChanged(int entryID);
+
+    @UiThread
     default void makeToast(Context context, String text) {
         Toast.makeText(context, text, Toast.LENGTH_SHORT).show();
     }
