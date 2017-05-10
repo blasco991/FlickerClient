@@ -26,8 +26,9 @@ public class MainActivity extends AppCompatActivity implements com.blasco991.fli
 
     public void search(View view) {
         EditText searchTerms = (EditText) findViewById(R.id.input_search_term);
+        mvc.controller.fetchPictureInfos(searchTerms.getText().toString());
         progressBar.setVisibility(View.VISIBLE);
-        PicturesListActivity.start(this, searchTerms.getText().toString());
+        PicturesListActivity.start(this);
     }
 
     @Override

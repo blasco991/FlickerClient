@@ -14,17 +14,17 @@ import java.io.Serializable;
 public class Entry implements Serializable {
 
     private int ID;
-    private Bitmap preview;
     private final String title;
     private final String url;
+    private final String url_preview;
     private final String tags;
 
-    public Entry(String title, String url, int id, String tags) {
+    public Entry(String title, int id, String url, String url_preview, String tags) {
         this.ID = id;
         this.tags = tags;
-        this.preview = null;
         this.title = title;
         this.url = url;
+        this.url_preview = url_preview;
     }
 
 
@@ -41,16 +41,11 @@ public class Entry implements Serializable {
         return url;
     }
 
-    public Bitmap getPreview() {
-        return preview;
-    }
-
-    public void setPreview(Bitmap bitmap) {
-        this.preview = bitmap;
-    }
-
     public String getTags() {
         return tags;
     }
 
+    public String getUrlPreview() {
+        return url_preview;
+    }
 }

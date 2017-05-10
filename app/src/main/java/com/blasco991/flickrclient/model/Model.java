@@ -17,7 +17,7 @@ import java.util.List;
 public class Model {
 
     private MVC mvc;
-    private final List<Entry> pictureInfos = new ArrayList<>(100);
+    private final List<Entry> pictureInfos = new ArrayList<>(50);
 
     public Model() {
     }
@@ -37,6 +37,5 @@ public class Model {
     public List<Entry> getPictureInfos() {
         return Collections.unmodifiableList(pictureInfos);
     }
-
 
 }
